@@ -4,7 +4,6 @@ BamViewer::BamViewer(QObject *parent)
 {
 
 
-
 }
 
 void BamViewer::setFilename(const QString &filename)
@@ -12,8 +11,8 @@ void BamViewer::setFilename(const QString &filename)
     QFileInfo info(filename);
     mFilename = info.absoluteFilePath();
 
-    QString s = "/home/sacha/exemple.sam";
-    qDebug()<<QFile::exists(s);
+    QString s = "/home/sacha/exemple.bam";
+    qDebug()<<s<<" "<<QFile::exists(s);
 
     BamFileIn file(s.toStdString().c_str());
 

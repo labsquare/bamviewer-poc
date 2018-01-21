@@ -8,7 +8,6 @@
 #include "seqan/bam_io.h"
 #include <iostream>
 
-#define SEQAN_HAS_ZLIB 1
 
 using namespace seqan;
 

@@ -24,6 +24,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG+= c++14
 
+DEFINES += "SEQAN_HAS_ZLIB=1"
+
+
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
@@ -36,4 +39,5 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
+LIBS+= -lrt
 LIBS+= -lz
