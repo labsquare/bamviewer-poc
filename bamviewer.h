@@ -1,6 +1,7 @@
 #ifndef BAMVIEWER_H
 #define BAMVIEWER_H
 #include <QAbstractScrollArea>
+#include <QtWidgets>
 #include <QPainter>
 #include <QtCore>
 
@@ -9,14 +10,14 @@
 #include <seqan/sequence.h>
 
 
-using namespace seqan;
+
 
 
 
 class BamViewer : public QAbstractScrollArea
 {
 public:
-    BamViewer(QObject * parent = nullptr);
+    BamViewer(QWidget * parent = nullptr);
 
     void setReferenceFile(const QString& fastaFile);
     void setAlignementFile(const QString& bamFile);
@@ -27,15 +28,27 @@ public:
     const QString &referenceFile() const;
     const QString &alignementFile() const;
 
-    quint64 idFromChromosom(const seqan::CharString& chromosom);
+    quint64 idFromChromosom(const seqan::CharString& chromosom) const;
 
 protected:
 
+    // -- geometry
+    void updateScrollBar();
+    void scrollContentsBy(int dx, int dy) override;
+    void resizeEvent(QResizeEvent * event) override;
+
+
+    // -- paint session
     void paintEvent(QPaintEvent * event)  override;
+    void paintReference(QPainter& painter);
+
+
+    // -- utils session
 
     QString referenceIndexFile() const;
+    quint64 currentReferenceSize() const;
 
-    seqan::Dna5String currentSequence();
+    seqan::Dna5String currentReferenceSequence();
 
 
 

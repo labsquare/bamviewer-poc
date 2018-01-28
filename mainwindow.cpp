@@ -8,11 +8,13 @@ MainWindow::MainWindow(QWidget *parent) :
     mViewer = new BamViewer;
 
     mViewer->setReferenceFile("/home/sacha/Bioinfo/data/hg19.fa");
-    mViewer->setRegion("chr3", 100000, 100050);
 
 
 
     setCentralWidget(mViewer);
+
+    resize(900, 400);
+
 }
 
 MainWindow::~MainWindow()
