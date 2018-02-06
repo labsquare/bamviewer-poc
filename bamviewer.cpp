@@ -9,7 +9,7 @@ BamViewer::BamViewer(QWidget *parent)
 
 
 
-    setRegion("chr1", 100000, 100050);
+    setRegion("seq", 0, 100);
 
 
 }
@@ -95,6 +95,7 @@ void BamViewer::paintReference(QPainter &painter)
 
 
 }
+
 
 QString BamViewer::referenceIndexFile() const
 {

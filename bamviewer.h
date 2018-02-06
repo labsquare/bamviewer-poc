@@ -43,6 +43,8 @@ protected:
     void paintReference(QPainter& painter);
 
 
+
+
     // -- utils session
 
     QString referenceIndexFile() const;

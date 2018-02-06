@@ -23,7 +23,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG+= c++14
+# Set data example path
 
+# Seqan configuration
 DEFINES += "SEQAN_HAS_ZLIB=1"
 DEFINES += "SEQAN_ENABLE_DEBUG=0"
 
@@ -33,7 +35,7 @@ INCLUDEPATH += "."
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    bamviewer.cpp
+        bamviewer.cpp
 
 HEADERS += \
         mainwindow.h \

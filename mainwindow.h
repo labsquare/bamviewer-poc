@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "bamviewer.h"
+#include <QContiguousCache>
 
 
 class MainWindow : public QMainWindow
@@ -15,6 +16,8 @@ public:
 
 private:
     BamViewer * mViewer;
+
+
 };
 
 #endif // MAINWINDOW_H
