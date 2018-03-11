@@ -11,9 +11,6 @@
 
 
 
-
-
-
 class BamViewer : public QAbstractScrollArea
 {
 public:
