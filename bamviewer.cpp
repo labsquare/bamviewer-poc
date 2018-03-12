@@ -124,7 +124,7 @@ void BamViewer::paintAlignement(QPainter &painter)
    while(!seqan::atEnd(bamFileIn))
    {
        seqan::readRecord(record, bamFileIn);
-        // use jump region .. .
+        //TODO :  use jump region .. .
        // this is just for testing
 
 
