@@ -9,6 +9,8 @@
 
 #include <QContiguousCache>
 
+#include <numeric>
+
 using namespace seqan;
 using namespace std;
 
@@ -41,10 +43,11 @@ int main(int argc, char *argv[])
     //cache.insert(400, new MonTest(400));
 
 
-
         MainWindow win;
         win.show();
 
+
+        qDebug()<<std::numeric_limits<quint32>::max();
 
     return app.exec();
 

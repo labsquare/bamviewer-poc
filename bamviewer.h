@@ -13,21 +13,55 @@
 
 class BamViewer : public QAbstractScrollArea
 {
+
+Q_OBJECT
 public:
     BamViewer(QWidget * parent = nullptr);
 
+    /*!
+     * \brief set fasta reference genom
+     * \param fastaFile
+     * \details ex: setReferenceFile("hg19.fa")
+     */
     void setReferenceFile(const QString& fastaFile);
-    void setAlignementFile(const QString& bamFile);
-    void setRegion(const QString& chr, quint64 start, quint64 end);
 
+    /*!
+     * \brief set Alignement BAM/Sam File
+     * \param bamFile
+     * \details setAlignementFile("sampole1.bam")
+     */
+    void setAlignementFile(const QString& bamFile);
+
+    /*!
+     * \brief set Region to display
+     * \param chr
+     * \param start
+     * \param end
+     */
+    void setRegion(const QString& chr, int start, int  end);
+
+    /*!
+     * \brief region
+     * \return current Genomic Region
+     */
+    const seqan::GenomicRegion &region() const;
+
+    QString regionName() const;
 
 
     const QString &referenceFile() const;
     const QString &alignementFile() const;
 
-    quint64 idFromChromosom(const seqan::CharString& chromosom) const;
+
+
+   Q_SIGNALS:
+    void regionChanged();
+
 
 protected:
+
+    quint64 idFromChromosom(const seqan::CharString& chromosom) const;
+
 
     // -- geometry
     void updateScrollBar();
@@ -45,9 +79,9 @@ protected:
     // -- utils session
 
     QString referenceIndexFile() const;
-    quint64 currentReferenceSize() const;
+    quint64 referenceLength(const QString& referenceName = QString()) const;
 
-    seqan::Dna5String currentReferenceSequence();
+    seqan::Dna5String regionSequence() const;
 
 
 
