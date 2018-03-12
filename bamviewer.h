@@ -84,6 +84,8 @@ protected:
     seqan::Dna5String regionSequence() const;
 
 
+    int base2pixel(int b);
+    int pixel2base(int p);
 
 
 private:

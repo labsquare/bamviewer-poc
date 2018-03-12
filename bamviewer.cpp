@@ -92,24 +92,24 @@ void BamViewer::paintEvent(QPaintEvent *event)
 
 void BamViewer::paintReference(QPainter &painter)
 {
-//    seqan::Dna5String seq = regionSequence();
-//    quint64 length = seqan::length(seq);
-//    float step = viewport()->width() / float(length);
+    seqan::Dna5String seq = regionSequence();
+    quint64 length = seqan::length(seq);
+    float step = viewport()->width() / float(length);
 
-//    QPen pen;
-//    pen.setWidth(3);
-//    painter.setPen(pen);
+    QPen pen;
+    pen.setWidth(3);
+    painter.setPen(pen);
 
-//    float x = 0;
-//     for (seqan::Dna5& nuc : seq)
-//     {
+    float x = 0;
+     for (seqan::Dna5& nuc : seq)
+     {
 
-//        // painter.drawPoint(x,10);
+        // painter.drawPoint(x,10);
 
-//         painter.drawText(x,10, QString(char(nuc)));
+         painter.drawText(x,10, QString(char(nuc)));
 
-//         x+=step;
-//     }
+         x+=step;
+     }
 
 //    for (int i=0; i< viewport()->width(); i+= step)
 //    {
@@ -213,6 +213,17 @@ seqan::Dna5String BamViewer::regionSequence() const
 
 }
 
+int BamViewer::base2pixel(int b)
+{
+    return b * viewport()->width() / int(seqan::length(mRegion));
+}
+
+int BamViewer::pixel2base(int p)
+{
+    return p * int(seqan::length(mRegion))/ viewport()->width();
+
+}
+
 const QString &BamViewer::alignementFile() const
 {
     return mAlignementFile;
@@ -254,8 +265,8 @@ void BamViewer::scrollContentsBy(int dx, int dy)
 
 void BamViewer::resizeEvent(QResizeEvent *event)
 {
-    Q_UNUSED(event)
 
+    int diff = event->size().width() - event->oldSize().width();
 
 
     updateScrollBar();
