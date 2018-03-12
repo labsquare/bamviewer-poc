@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mViewer = new BamViewer;
 
     mViewer->setReferenceFile("/tmp/data/ecoli.fa");
+    mViewer->setAlignementFile("/tmp/data/sample1.bam");
 
 
 

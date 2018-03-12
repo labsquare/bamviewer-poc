@@ -38,7 +38,7 @@ protected:
     // -- paint session
     void paintEvent(QPaintEvent * event)  override;
     void paintReference(QPainter& painter);
-
+    void paintAlignement(QPainter& painter);
 
 
 

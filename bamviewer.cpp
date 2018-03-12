@@ -9,7 +9,7 @@ BamViewer::BamViewer(QWidget *parent)
 
 
 
-    setRegion("seq", 0, 100);
+    setRegion("ecoli", 0, 100);
 
 
 }
@@ -59,6 +59,7 @@ void BamViewer::paintEvent(QPaintEvent *event)
 
 
     paintReference(painter);
+    paintAlignement(painter);
 
 
 
@@ -92,6 +93,70 @@ void BamViewer::paintReference(QPainter &painter)
 //        painter.drawStaticText(i,10, seq[i]);
 
 //    }
+
+
+}
+
+void BamViewer::paintAlignement(QPainter &painter)
+{
+
+   seqan::BamFileIn bamFileIn;
+   quint64 length = seqan::length(currentReferenceSequence());
+   float step     = viewport()->width() / float(length);
+
+
+   if(!open(bamFileIn, alignementFile().toStdString().data()))
+   {
+       qWarning()<<Q_FUNC_INFO<<"cannot open bam file";
+       return;
+   }
+
+
+   seqan::BamHeader header;
+   seqan::readHeader(header, bamFileIn);
+
+
+   seqan::BamAlignmentRecord record;
+
+   int row = 2;
+   QFontMetrics metrics(painter.font());
+
+   while(!seqan::atEnd(bamFileIn))
+   {
+       seqan::readRecord(record, bamFileIn);
+        // use jump region .. .
+       // this is just for testing
+
+
+       int32_t pos = record.beginPos;
+       int32_t end = pos + seqan::length(record.seq);
+
+
+
+       if ( pos >= mRegion.beginPos && end <= mRegion.endPos)
+       {
+
+           int x = (pos - mRegion.beginPos) * step;
+
+           for (const seqan::CharString& nuc : record.seq)
+           {
+
+              // painter.drawPoint(x,10);
+
+               QString base = seqan::toCString(nuc);
+
+               painter.drawText(x, row * metrics.height(), base);
+
+               x+=step;
+           }
+
+            row++;
+       }
+
+   }
+
+
+
 
 
 }
