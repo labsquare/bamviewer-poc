@@ -9,7 +9,6 @@ BamViewer::BamViewer(QWidget *parent)
 
 
 
-    setRegion("ecoli", 0, 100);
 
     resize(800,400);
 
@@ -118,7 +117,7 @@ void BamViewer::paintAlignement(QPainter &painter)
     QFontMetrics metrics(painter.font());
 
     bool hasAlignements = false ;
-    int rID = idFromChromosom("ecoli");
+    int rID = idFromChromosom(mRegion.seqName);
 
     if (!seqan::jumpToRegion(bamFileIn, hasAlignements, rID, mRegion.beginPos, mRegion.endPos, baiIndex))
     {

@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mViewer->setReferenceFile("/tmp/data/ecoli.fa");
     mViewer->setAlignementFile("/tmp/data/sample1.bam");
+    mViewer->setRegion("ecoli", 0, 100);
+
 
 
     mEdit   = new QLineEdit;
