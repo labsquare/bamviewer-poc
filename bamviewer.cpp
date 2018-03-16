@@ -92,7 +92,6 @@ void BamViewer::paintAlignement(QPainter &painter)
 {
 
     seqan::BamFileIn bamFileIn;
-    float step     = float(viewport()->width()) / float(regionLength());
 
     // Open bam file
     if(!open(bamFileIn, alignementFile().toStdString().data()))
@@ -101,7 +100,7 @@ void BamViewer::paintAlignement(QPainter &painter)
         return;
     }
 
-
+    // Open BAI index file
     seqan::BamIndex<seqan::Bai> baiIndex;
     if (!open(baiIndex, QString(alignementFile()+".bai").toStdString().data()))
     {
@@ -110,30 +109,41 @@ void BamViewer::paintAlignement(QPainter &painter)
     }
 
 
+    // Read header
     seqan::BamHeader header;
     seqan::readHeader(header, bamFileIn);
 
 
-    QFontMetrics metrics(painter.font());
 
+    // jump to region
     bool hasAlignements = false ;
     int rID = idFromChromosom(mRegion.seqName);
 
-    if (!seqan::jumpToRegion(bamFileIn, hasAlignements, rID, mRegion.beginPos, mRegion.endPos, baiIndex))
+    // On augmente la region ou on récupere les reads pour avoir des semi-reads d'afficher
+    int rmin = mRegion.beginPos - 70 < 1 ? 1 : mRegion.beginPos - 70;
+    int rmax = mRegion.endPos + 70 > 1000 ? 1000 : mRegion.endPos + 70;
+
+    qDebug()<<rmin<<" "<<rmax;
+
+
+    if (!seqan::jumpToRegion(bamFileIn, hasAlignements, rID, rmin, rmax, baiIndex))
     {
         qWarning()<<"could not jump to region";
         return;
     }
 
+    // if no alignement avaible
     if (!hasAlignements)
     {
         qWarning()<<"no alignement here";
         return;
     }
 
+
+    // Loop over reads and draw it
+    QFontMetrics metrics(painter.font());
     seqan::BamAlignmentRecord record;
     int row = 3;
-
     while (!seqan::atEnd(bamFileIn) && row * metrics.height() < viewport()->height())
     {
 
@@ -145,26 +155,23 @@ void BamViewer::paintAlignement(QPainter &painter)
         seqan::readRecord(record, bamFileIn);
 
         float step = float(viewport()->width()) / float(regionLength());
-        float x    = (record.beginPos - mRegion.beginPos) * viewport()->width() / regionLength();
+
+        int delta =  record.beginPos- mRegion.beginPos;
+
+        float x    = delta *  float(viewport()->width()) / float(regionLength());
+
+
 
 
         for (const seqan::CharString& nuc : record.seq)
         {
 
                 painter.drawText(x,row *  metrics.height(), seqan::toCString(nuc));
-
                 x+= step;
         }
 
         row++;
-
-
-
     }
-
-
-
-
 }
 
 
@@ -254,7 +261,7 @@ void BamViewer::updateScrollBar()
     qDebug()<<"max size"<<maxXSize;
 
 
-    horizontalScrollBar()->setRange(0, maxXSize - viewport()->width());
+    horizontalScrollBar()->setRange(1, maxXSize - viewport()->width());
     horizontalScrollBar()->setPageStep(viewport()->width());
 }
 

@@ -26,7 +26,6 @@ public:
     const QString &referenceFile() const;
     const QString &alignementFile() const;
 
-    quint64 idFromChromosom(const seqan::CharString& chromosom) const;
 
 protected:
 
@@ -44,7 +43,7 @@ protected:
 
 
     // -- utils session
-
+    quint64 idFromChromosom(const seqan::CharString& chromosom) const;
     QString referenceIndexFile() const;
     quint64 currentReferenceSize() const;
 
@@ -57,7 +56,6 @@ private:
     seqan::GenomicRegion mRegion;
     seqan::FaiIndex mFaiIndex;
 
-    int basePer800 = 100;
 
 
 };
