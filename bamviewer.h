@@ -50,6 +50,7 @@ protected:
     seqan::Dna5String currentReferenceSequence();
 
 
+
 private:
     QString mReferenceFile;
     QString mAlignementFile;

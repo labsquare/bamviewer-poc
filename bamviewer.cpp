@@ -119,14 +119,8 @@ void BamViewer::paintAlignement(QPainter &painter)
     bool hasAlignements = false ;
     int rID = idFromChromosom(mRegion.seqName);
 
-    // On augmente la region ou on récupere les reads pour avoir des semi-reads d'afficher
-    int rmin = mRegion.beginPos - 70 < 1 ? 1 : mRegion.beginPos - 70;
-    int rmax = mRegion.endPos + 70 > 1000 ? 1000 : mRegion.endPos + 70;
 
-    qDebug()<<rmin<<" "<<rmax;
-
-
-    if (!seqan::jumpToRegion(bamFileIn, hasAlignements, rID, rmin, rmax, baiIndex))
+    if (!seqan::jumpToRegion(bamFileIn, hasAlignements, rID, 1, 1000, baiIndex))
     {
         qWarning()<<"could not jump to region";
         return;
@@ -142,80 +136,88 @@ void BamViewer::paintAlignement(QPainter &painter)
 
     // Loop over reads and draw it
     QFontMetrics metrics(painter.font());
-    seqan::BamAlignmentRecord record;
-    int row = 3;
-    while (!seqan::atEnd(bamFileIn) && row * metrics.height() < viewport()->height())
+
+
+    QList<QList<seqan::BamAlignmentRecord> > rows;
+
+
+    while (!seqan::atEnd(bamFileIn))
     {
 
         //        seqan::Dna5String ref = currentReferenceSequence();
         //        seqan::Align<seqan::Dna5String> align;
         //        seqan::bamRecordToAlignment(align, ref, record );
 
-
+        seqan::BamAlignmentRecord record;
         seqan::readRecord(record, bamFileIn);
 
-        float step = float(viewport()->width()) / float(regionLength());
+        bool newRow = true;
 
-        int delta =  record.beginPos- mRegion.beginPos;
-
-        float x    = delta *  float(viewport()->width()) / float(regionLength());
-
-
-
-
-        for (const seqan::CharString& nuc : record.seq)
+        for (auto& row : rows)
         {
-
-                painter.drawText(x,row *  metrics.height(), seqan::toCString(nuc));
-                x+= step;
+            seqan::BamAlignmentRecord rec = row.last();
+            if (rec.beginPos + seqan::length(rec.seq) + 10 > record.beginPos)
+            {
+                row.append(record);
+                newRow = false;
+                break;
+            }
+        }
+        if (newRow)
+        {
+            QList<seqan::BamAlignmentRecord> row;
+            row.append(record);
+            rows.append(row);
         }
 
-        row++;
+
     }
+
+
+
+    for (int r = 0; r < rows.size(); ++r)
+    {
+
+        for (const auto& rec : rows[r])
+        {
+            float step = float(viewport()->width()) / float(regionLength());
+            int delta  = rec.beginPos- mRegion.beginPos;
+            float x    = delta *  float(viewport()->width()) / float(regionLength());
+
+            for (const seqan::CharString& nuc : rec.seq)
+            {
+
+                painter.drawText(x,(r+3) *  metrics.height(), seqan::toCString(nuc));
+                x+= step;
+            }
+
+        }
+
+    }
+
+
+
+
+
+    //        float step = float(viewport()->width()) / float(regionLength());
+
+    //        int delta =  record.beginPos- mRegion.beginPos;
+
+    //        float x    = delta *  float(viewport()->width()) / float(regionLength());
+
+
+
+
+    //        for (const seqan::CharString& nuc : record.seq)
+    //        {
+
+    //                painter.drawText(x,row *  metrics.height(), seqan::toCString(nuc));
+    //                x+= step;
+    //        }
+
+    //        row++;
+
 }
-
-
-
-//    while(!seqan::atEnd(bamFileIn))
-//    {
-
-//        seqan::readRecord(record, bamFileIn);
-//        //TODO :  use jump region .. .
-//        // this is just for testing
-
-
-
-
-
-//        //        int32_t pos = record.beginPos;
-//        //        int32_t end = pos + seqan::length(record.seq);
-
-
-
-//        //        if ( pos >= mRegion.beginPos && pos <= mRegion.endPos)
-//        //        {
-
-//        //            int x = (pos - mRegion.beginPos) * step;
-
-//        //            for (const seqan::CharString& nuc : record.seq)
-//        //            {
-
-//        //                // painter.drawPoint(x,10);
-
-//        //                QString base = seqan::toCString(nuc);
-
-
-
-//        //                painter.drawText(x, row * metrics.height(), base);
-
-//        //                x+=step;
-//        //            }
-
-//        //            row++;
-//        //        }
-
-//    }
-
 
 
 
