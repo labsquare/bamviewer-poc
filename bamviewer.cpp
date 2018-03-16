@@ -156,7 +156,7 @@ void BamViewer::paintAlignement(QPainter &painter)
         for (auto& row : rows)
         {
             seqan::BamAlignmentRecord rec = row.last();
-            if (rec.beginPos + seqan::length(rec.seq) + 10 > record.beginPos)
+            if (int(record.beginPos  > int(rec.beginPos + seqan::length(rec.seq))))
             {
                 row.append(record);
                 newRow = false;
@@ -173,7 +173,7 @@ void BamViewer::paintAlignement(QPainter &painter)
 
     }
 
-
+    qDebug()<<"rows" <<rows.size();
 
     for (int r = 0; r < rows.size(); ++r)
     {
