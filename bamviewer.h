@@ -19,6 +19,7 @@ public:
     void setReferenceFile(const QString& fastaFile);
     void setAlignementFile(const QString& bamFile);
     void setRegion(const QString& chr, quint64 start, quint64 end);
+    quint64 regionLength() const;
 
 
 
@@ -50,13 +51,13 @@ protected:
     seqan::Dna5String currentReferenceSequence();
 
 
-
-
 private:
     QString mReferenceFile;
     QString mAlignementFile;
     seqan::GenomicRegion mRegion;
     seqan::FaiIndex mFaiIndex;
+
+    int basePer800 = 100;
 
 
 };

@@ -17,6 +17,8 @@ public:
 private:
     BamViewer * mViewer;
 
+    QSlider * mSlider;
+    QLineEdit * mEdit;
 
 };
 

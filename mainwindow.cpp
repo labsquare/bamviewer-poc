@@ -10,6 +10,16 @@ MainWindow::MainWindow(QWidget *parent) :
     mViewer->setAlignementFile("/tmp/data/sample1.bam");
 
 
+    mEdit   = new QLineEdit;
+    mSlider = new QSlider(Qt::Horizontal);
+
+    QToolBar * tool = new QToolBar;
+    tool->addWidget(mEdit);
+    tool->addWidget(mSlider);
+
+    addToolBar(Qt::BottomToolBarArea, tool);
+
+
 
     setCentralWidget(mViewer);
 

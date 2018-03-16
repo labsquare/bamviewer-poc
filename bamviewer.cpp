@@ -11,6 +11,8 @@ BamViewer::BamViewer(QWidget *parent)
 
     setRegion("ecoli", 0, 100);
 
+    resize(800,400);
+
 
 }
 
@@ -52,6 +54,11 @@ void BamViewer::setRegion(const QString &chr, quint64 start, quint64 end)
     mRegion.endPos   = end;
 }
 
+quint64 BamViewer::regionLength() const
+{
+    return mRegion.endPos - mRegion.beginPos;
+}
+
 void BamViewer::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
@@ -67,99 +74,145 @@ void BamViewer::paintEvent(QPaintEvent *event)
 
 void BamViewer::paintReference(QPainter &painter)
 {
+
     seqan::Dna5String seq = currentReferenceSequence();
-    quint64 length = seqan::length(seq);
-    float step = viewport()->width() / float(length);
 
-    QPen pen;
-    pen.setWidth(3);
-    painter.setPen(pen);
+    float step = float(viewport()->width()) / float(regionLength());
+    float x    = 0;
 
-    float x = 0;
-     for (seqan::Dna5& nuc : seq)
-     {
+    for (auto& c : seq)
+    {
 
-        // painter.drawPoint(x,10);
+        painter.drawText(x,20,QString(char(c)));
+        x+=step;
 
-         painter.drawText(x,10, QString(char(nuc)));
-
-         x+=step;
-     }
-
-//    for (int i=0; i< viewport()->width(); i+= step)
-//    {
-
-//        painter.drawPoint(i, 10);
-//        painter.drawStaticText(i,10, seq[i]);
-
-//    }
-
-
+    }
 }
 
 void BamViewer::paintAlignement(QPainter &painter)
 {
 
-   seqan::BamFileIn bamFileIn;
-   quint64 length = seqan::length(currentReferenceSequence());
-   float step     = viewport()->width() / float(length);
+    seqan::BamFileIn bamFileIn;
+    float step     = float(viewport()->width()) / float(regionLength());
+
+    // Open bam file
+    if(!open(bamFileIn, alignementFile().toStdString().data()))
+    {
+        qWarning()<<Q_FUNC_INFO<<"cannot open bam file";
+        return;
+    }
 
 
-   if(!open(bamFileIn, alignementFile().toStdString().data()))
-   {
-       qWarning()<<Q_FUNC_INFO<<"cannot open bam file";
-       return;
-   }
+    seqan::BamIndex<seqan::Bai> baiIndex;
+    if (!open(baiIndex, QString(alignementFile()+".bai").toStdString().data()))
+    {
+        qWarning()<<Q_FUNC_INFO<<"ERROR: Could not read BAI index file ";
+        return ;
+    }
 
 
-   seqan::BamHeader header;
-   seqan::readHeader(header, bamFileIn);
+    seqan::BamHeader header;
+    seqan::readHeader(header, bamFileIn);
 
 
-   seqan::BamAlignmentRecord record;
+    QFontMetrics metrics(painter.font());
 
-   int row = 2;
-   QFontMetrics metrics(painter.font());
+    bool hasAlignements = false ;
+    int rID = idFromChromosom("ecoli");
 
-   while(!seqan::atEnd(bamFileIn))
-   {
-       seqan::readRecord(record, bamFileIn);
-        //TODO :  use jump region .. .
-       // this is just for testing
+    if (!seqan::jumpToRegion(bamFileIn, hasAlignements, rID, mRegion.beginPos, mRegion.endPos, baiIndex))
+    {
+        qWarning()<<"could not jump to region";
+        return;
+    }
+
+    if (!hasAlignements)
+    {
+        qWarning()<<"no alignement here";
+        return;
+    }
+
+    seqan::BamAlignmentRecord record;
+    int row = 3;
+
+    while (!seqan::atEnd(bamFileIn) && row * metrics.height() < viewport()->height())
+    {
+
+        //        seqan::Dna5String ref = currentReferenceSequence();
+        //        seqan::Align<seqan::Dna5String> align;
+        //        seqan::bamRecordToAlignment(align, ref, record );
 
 
-       int32_t pos = record.beginPos;
-       int32_t end = pos + seqan::length(record.seq);
+        seqan::readRecord(record, bamFileIn);
+
+        float step = float(viewport()->width()) / float(regionLength());
+        float x    = (record.beginPos - mRegion.beginPos) * viewport()->width() / regionLength();
+
+
+        for (const seqan::CharString& nuc : record.seq)
+        {
+
+                painter.drawText(x,row *  metrics.height(), seqan::toCString(nuc));
+
+                x+= step;
+        }
+
+        row++;
 
 
 
-       if ( pos >= mRegion.beginPos && end <= mRegion.endPos)
-       {
-
-           int x = (pos - mRegion.beginPos) * step;
-
-           for (const seqan::CharString& nuc : record.seq)
-           {
-
-              // painter.drawPoint(x,10);
-
-               QString base = seqan::toCString(nuc);
-
-               painter.drawText(x, row * metrics.height(), base);
-
-               x+=step;
-           }
-
-            row++;
-       }
-
-   }
-
+    }
 
 
 
 
 }
+
+
+
+//    while(!seqan::atEnd(bamFileIn))
+//    {
+
+//        seqan::readRecord(record, bamFileIn);
+//        //TODO :  use jump region .. .
+//        // this is just for testing
+
+
+
+
+
+//        //        int32_t pos = record.beginPos;
+//        //        int32_t end = pos + seqan::length(record.seq);
+
+
+
+//        //        if ( pos >= mRegion.beginPos && pos <= mRegion.endPos)
+//        //        {
+
+//        //            int x = (pos - mRegion.beginPos) * step;
+
+//        //            for (const seqan::CharString& nuc : record.seq)
+//        //            {
+
+//        //                // painter.drawPoint(x,10);
+
+//        //                QString base = seqan::toCString(nuc);
+
+
+
+//        //                painter.drawText(x, row * metrics.height(), base);
+
+//        //                x+=step;
+//        //            }
+
+//        //            row++;
+//        //        }
+
+//    }
+
+
+
+
 
 
 QString BamViewer::referenceIndexFile() const
@@ -169,13 +222,12 @@ QString BamViewer::referenceIndexFile() const
 
 quint64 BamViewer::currentReferenceSize() const
 {
-   unsigned idx = idFromChromosom(mRegion.seqName);
-   return seqan::sequenceLength(mFaiIndex,idx);
+    unsigned idx = idFromChromosom(mRegion.seqName);
+    return seqan::sequenceLength(mFaiIndex,idx);
 }
 
 seqan::Dna5String BamViewer::currentReferenceSequence()
 {
-
     seqan::Dna5String sequenceInfix;
     seqan::readRegion(sequenceInfix, mFaiIndex, mRegion);
     return sequenceInfix;
@@ -220,7 +272,9 @@ void BamViewer::scrollContentsBy(int dx, int dy)
 void BamViewer::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
-    updateScrollBar();
+
+
+
 }
 
 const QString &BamViewer::referenceFile() const
