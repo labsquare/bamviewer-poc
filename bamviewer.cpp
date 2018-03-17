@@ -7,9 +7,6 @@ BamViewer::BamViewer(QWidget *parent)
     viewport()->setAttribute(Qt::WA_AcceptTouchEvents, true);
     QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
 
-
-
-
     resize(800,400);
 
 
@@ -17,7 +14,6 @@ BamViewer::BamViewer(QWidget *parent)
 
 void BamViewer::setReferenceFile(const QString &fastaFile)
 {
-
     mReferenceFile    = fastaFile;
     QString indexFile = fastaFile+".bai";
 
@@ -35,9 +31,14 @@ void BamViewer::setReferenceFile(const QString &fastaFile)
 
 void BamViewer::setAlignementFile(const QString &bamFile)
 {
-
     mAlignementFile = bamFile;
+    QString index   = bamFile+".bai";
 
+    if (!QFile::exists(mAlignementFile))
+        qDebug()<<Q_FUNC_INFO<<mAlignementFile<<" doesn't exists";
+
+    if (!QFile::exists(index))
+        qDebug()<<Q_FUNC_INFO<<index<<" doesn't exists";
 
 }
 void BamViewer::setRegion(const QString& chr, int start, int end)
@@ -68,17 +69,15 @@ void BamViewer::paintEvent(QPaintEvent *event)
     Q_UNUSED(event)
     QPainter painter(viewport());
 
-
     paintReference(painter);
     paintAlignement(painter);
-
-
 
 }
 
 void BamViewer::paintReference(QPainter &painter)
 {
-
+    // paint top reference in viewport.width
+    // ACGTATAT........................
     seqan::Dna5String seq = currentReferenceSequence();
 
     float step = float(viewport()->width()) / float(regionLength());
@@ -86,15 +85,15 @@ void BamViewer::paintReference(QPainter &painter)
 
     for (auto& c : seq)
     {
-
         painter.drawText(x,20,QString(char(c)));
         x+=step;
-
     }
 }
 
 void BamViewer::paintAlignement(QPainter &painter)
 {
+    // paint top reference in viewport.width
+    // ACGTATAT........................
 
     seqan::BamFileIn bamFileIn;
 
@@ -125,6 +124,7 @@ void BamViewer::paintAlignement(QPainter &painter)
     int rID = idFromChromosom(mRegion.seqName);
 
 
+    // for testing purpose : get ALL REGION 1-1000
     if (!seqan::jumpToRegion(bamFileIn, hasAlignements, rID, 1, 1000, baiIndex))
     {
         qWarning()<<"could not jump to region";
@@ -139,7 +139,7 @@ void BamViewer::paintAlignement(QPainter &painter)
     }
 
 
-    // Loop over reads and draw it
+    // Loop over reads and draw it using box packing
     QFontMetrics metrics(painter.font());
 
 
