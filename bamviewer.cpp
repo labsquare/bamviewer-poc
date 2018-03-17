@@ -52,7 +52,7 @@ void BamViewer::setRegion(const QString& chr, int start, int end)
 
 void BamViewer::setRegion(const seqan::GenomicRegion &region)
 {
-   mRegion = region;
+    mRegion = region;
 }
 
 int BamViewer::regionLength() const
@@ -145,60 +145,43 @@ void BamViewer::paintAlignement(QPainter &painter)
     QFontMetrics metrics(painter.font());
 
 
-    QList<QList<seqan::BamAlignmentRecord> > rows;
-
-
+    // Pack Reads ..
+    mReadPacker.clear();
     while (!seqan::atEnd(bamFileIn))
     {
+        seqan::BamAlignmentRecord record;
+        seqan::readRecord(record, bamFileIn);
+
+        mReadPacker.addRecord(record);
+
 
         //        seqan::Dna5String ref = currentReferenceSequence();
         //        seqan::Align<seqan::Dna5String> align;
         //        seqan::bamRecordToAlignment(align, ref, record );
 
-        seqan::BamAlignmentRecord record;
-        seqan::readRecord(record, bamFileIn);
-
-        bool newRow = true;
-
-        for (auto& row : rows)
-        {
-            seqan::BamAlignmentRecord rec = row.last();
-            if (int(record.beginPos  > int(rec.beginPos + seqan::length(rec.seq))))
-            {
-                row.append(record);
-                newRow = false;
-                break;
-            }
-        }
-        if (newRow)
-        {
-            QList<seqan::BamAlignmentRecord> row;
-            row.append(record);
-            rows.append(row);
-        }
-
-
     }
 
-    qDebug()<<"rows" <<rows.size();
+    // Draw reads ...
 
-    for (int r = 0; r < rows.size(); ++r)
+    int row    = 0;
+    float step = float(viewport()->width()) / float(regionLength());
+
+    while ( row < mReadPacker.rows() && (row+3) * metrics.height() < viewport()->height())
     {
 
-        for (const auto& rec : rows[r])
+        for ( const auto& rec : mReadPacker.record(row))
         {
-            float step = float(viewport()->width()) / float(regionLength());
             int delta  = rec.beginPos- mRegion.beginPos;
             float x    = delta *  float(viewport()->width()) / float(regionLength());
 
             for (const seqan::CharString& nuc : rec.seq)
             {
-
-                painter.drawText(x,(r+3) *  metrics.height(), seqan::toCString(nuc));
+                painter.drawText(x,(row+3) *  metrics.height(), seqan::toCString(nuc));
                 x+= step;
             }
-
         }
+
+        row++;
 
     }
 

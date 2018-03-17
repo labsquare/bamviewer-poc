@@ -33,11 +33,13 @@ INCLUDEPATH += "."
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        bamviewer.cpp
+        bamviewer.cpp \
+    readpacker.cpp
 
 HEADERS += \
         mainwindow.h \
-    bamviewer.h
+    bamviewer.h \
+    readpacker.h
 
 FORMS += \
         mainwindow.ui

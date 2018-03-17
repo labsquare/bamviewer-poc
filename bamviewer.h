@@ -9,6 +9,8 @@
 #include <seqan/bam_io.h>
 #include <seqan/sequence.h>
 
+#include "readpacker.h"
+
 
 
 class BamViewer : public QAbstractScrollArea
@@ -130,6 +132,8 @@ private:
     QString mAlignementFile;
     seqan::GenomicRegion mRegion;
     seqan::FaiIndex mFaiIndex;
+
+    ReadPacker mReadPacker;
 
 
 
