@@ -18,23 +18,18 @@ BamViewer::BamViewer(QWidget *parent)
 void BamViewer::setReferenceFile(const QString &fastaFile)
 {
 
-    mReferenceFile = fastaFile;
+    mReferenceFile    = fastaFile;
+    QString indexFile = fastaFile+".bai";
 
     if (!QFile::exists(mReferenceFile))
         qDebug()<<Q_FUNC_INFO<<mReferenceFile<<" doesn't exists";
 
-    if (!QFile::exists(referenceIndexFile()))
-        qDebug()<<Q_FUNC_INFO<<referenceIndexFile()<<" doesn't exists";
+    if (!QFile::exists(indexFile))
+        qDebug()<<Q_FUNC_INFO<<indexFile<<" doesn't exists";
 
 
     if (!open(mFaiIndex, mReferenceFile.toStdString().data()))
-        qDebug() << Q_FUNC_INFO<< "ERROR: Could not load FAI index " << referenceIndexFile() << "\n";
-
-
-    updateScrollBar();
-
-
-
+        qDebug() << Q_FUNC_INFO<< "ERROR: Could not load FAI index " << indexFile<< "\n";
 
 }
 
@@ -45,17 +40,27 @@ void BamViewer::setAlignementFile(const QString &bamFile)
 
 
 }
-
-void BamViewer::setRegion(const QString &chr, quint64 start, quint64 end)
+void BamViewer::setRegion(const QString& chr, int start, int end)
 {
     mRegion.seqName  = chr.toStdString();
     mRegion.beginPos = start;
     mRegion.endPos   = end;
 }
 
-quint64 BamViewer::regionLength() const
+void BamViewer::setRegion(const seqan::GenomicRegion &region)
+{
+   mRegion = region;
+}
+
+int BamViewer::regionLength() const
 {
     return mRegion.endPos - mRegion.beginPos;
+}
+
+quint64 BamViewer::referenceLength(const QString &chr) const
+{
+    quint64 idx = idFromChromosom(chr.toStdString().data());
+    return seqan::sequenceLength(mFaiIndex,idx);
 }
 
 void BamViewer::paintEvent(QPaintEvent *event)
@@ -219,27 +224,23 @@ void BamViewer::paintAlignement(QPainter &painter)
 
 }
 
-
-
-
-
-QString BamViewer::referenceIndexFile() const
+quint64 BamViewer::currentReferenceLength() const
 {
-    return mReferenceFile+".fai";
+    quint64 idx = idFromChromosom(mRegion.seqName);
+    return seqan::sequenceLength(mFaiIndex,idx);
 }
 
-quint64 BamViewer::currentReferenceSize() const
+
+seqan::Dna5String BamViewer::referenceSequence(const seqan::GenomicRegion &region)
 {
-    unsigned idx = idFromChromosom(mRegion.seqName);
-    return seqan::sequenceLength(mFaiIndex,idx);
+    seqan::Dna5String sequenceInfix;
+    seqan::readRegion(sequenceInfix, mFaiIndex, region);
+    return sequenceInfix;
 }
 
 seqan::Dna5String BamViewer::currentReferenceSequence()
 {
-    seqan::Dna5String sequenceInfix;
-    seqan::readRegion(sequenceInfix, mFaiIndex, mRegion);
-    return sequenceInfix;
-
+    return referenceSequence(mRegion);
 }
 
 const QString &BamViewer::alignementFile() const
@@ -258,7 +259,7 @@ quint64 BamViewer::idFromChromosom(const seqan::CharString &chromosom) const
 
 void BamViewer::updateScrollBar()
 {
-    int maxXSize = currentReferenceSize();
+    int maxXSize = currentReferenceLength();
 
     qDebug()<<"max size"<<maxXSize;
 
