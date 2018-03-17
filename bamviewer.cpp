@@ -27,6 +27,8 @@ void BamViewer::setReferenceFile(const QString &fastaFile)
     if (!open(mFaiIndex, mReferenceFile.toStdString().data()))
         qDebug() << Q_FUNC_INFO<< "ERROR: Could not load FAI index " << indexFile<< "\n";
 
+    updateScrollBar();
+
 }
 
 void BamViewer::setAlignementFile(const QString &bamFile)
