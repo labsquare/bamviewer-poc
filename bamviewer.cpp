@@ -71,6 +71,11 @@ void BamViewer::paintEvent(QPaintEvent *event)
     Q_UNUSED(event)
     QPainter painter(viewport());
 
+    QFont font("Monospace");
+    font.setStyleHint(QFont::TypeWriter);
+
+    painter.setFont(font);
+
     paintReference(painter);
     paintAlignement(painter);
 
@@ -158,11 +163,17 @@ void BamViewer::paintAlignement(QPainter &painter)
         int delta  = record.beginPos - mRegion.beginPos;
         float x    = delta *  float(viewport()->width()) / float(regionLength());
 
-        for (const seqan::CharString& nuc : record.seq)
-        {
-            painter.drawText(x,(row+3) *  metrics.height(), seqan::toCString(nuc));
-            x+= step;
-        }
+        std::stringstream stream;
+        stream << record.seq;
+
+        painter.drawText(x,(row+3) *  metrics.height(), QString::fromStdString(stream.str()));
+
+
+//        for (const seqan::CharString& nuc : record.seq)
+//        {
+//            painter.drawText(x,(row+3) *  metrics.height(), seqan::toCString(nuc));
+//            x+= step;
+//        }
 
         //        seqan::Dna5String ref = currentReferenceSequence();
         //        seqan::Align<seqan::Dna5String> align;
