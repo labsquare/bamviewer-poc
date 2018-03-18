@@ -196,48 +196,15 @@ void BamViewer::paintAlignement(QPainter &painter)
 
 
 
-//        painter.setBrush(QColor("#C9C9FF"));
-//        painter.drawRect(x,(row+2)*  metrics.height(),
-//                         metrics.width(read),
-//                         metrics.height()-4
-//                         );
+        //        painter.setBrush(QColor("#C9C9FF"));
+        //        painter.drawRect(x,(row+2)*  metrics.height(),
+        //                         metrics.width(read),
+        //                         metrics.height()-4
+        //                         );
 
-        painter.drawText(x,(row+3) *  metrics.height(), read);
-
-
-//        for (const seqan::CharString& nuc : record.seq)
-//        {
-//            painter.drawText(x,(row+3) *  metrics.height(), seqan::toCString(nuc));
-//            x+= step;
-//        }
-
-        //        seqan::Dna5String ref = currentReferenceSequence();
-        //        seqan::Align<seqan::Dna5String> align;
-        //        seqan::bamRecordToAlignment(align, ref, record );
-
+        if ( (row + 3 ) * metrics.height() < viewport()->height())
+            painter.drawText(x,(row+3) *  metrics.height(), read);
     }
-
-    // Draw reads ..
-
-
-    //        float step = float(viewport()->width()) / float(regionLength());
-
-    //        int delta =  record.beginPos- mRegion.beginPos;
-
-    //        float x    = delta *  float(viewport()->width()) / float(regionLength());
-
-
-
-
-    //        for (const seqan::CharString& nuc : record.seq)
-    //        {
-
-    //                painter.drawText(x,row *  metrics.height(), seqan::toCString(nuc));
-    //                x+= step;
-    //        }
-
-    //        row++;
-
 }
 
 quint64 BamViewer::currentReferenceLength() const
