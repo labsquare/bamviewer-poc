@@ -91,9 +91,12 @@ void BamViewer::paintReference(QPainter &painter)
     int x    = 0;
 
 
-    std::stringstream stream;
-    stream << seq;
-    QString ref = QString::fromStdString(stream.str());
+    QByteArray ref;
+
+    // seqan to Qt
+    std::copy(seqan::begin(seq),
+              seqan::end(seq),
+              std::back_inserter(ref));
 
 
     QFont font = painter.font();
@@ -167,22 +170,31 @@ void BamViewer::paintAlignement(QPainter &painter)
     // WARNING : => font metrics already set in paintReference
     // float step = float(qAbs(metrics.width(ref) - viewport()->width())) / float(ref.length());
 
+
+    // We must create 2 loop .
+    // One for computation and one for drawing, because we don't want to draw extra reads
     while (!seqan::atEnd(bamFileIn))
     {
         seqan::BamAlignmentRecord record;
         seqan::readRecord(record, bamFileIn);
+
 
         int row = mReadPacker.getYRecord(record);
 
         int delta  = record.beginPos - mRegion.beginPos;
         float x    = delta *  float(viewport()->width()) / float(regionLength());
 
-        std::stringstream stream;
-        stream << record.seq;
-
         // draw reads
 
-        QString read = QString::fromStdString(stream.str());
+        // seqan to Qt
+
+        QByteArray read;
+
+        std::copy(seqan::begin(record.seq),
+                  seqan::end(record.seq),
+                  std::back_inserter(read));
+
+
 
 //        painter.setBrush(QColor("#C9C9FF"));
 //        painter.drawRect(x,(row+2)*  metrics.height(),
@@ -190,7 +202,7 @@ void BamViewer::paintAlignement(QPainter &painter)
 //                         metrics.height()-4
 //                         );
 
-        painter.drawText(x,(row+3) *  metrics.height(), QString::fromStdString(stream.str()));
+        painter.drawText(x,(row+3) *  metrics.height(), read);
 
 
 //        for (const seqan::CharString& nuc : record.seq)
