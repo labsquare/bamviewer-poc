@@ -99,7 +99,7 @@ void BamViewer::paintReference(QPainter &painter)
     QFont font = painter.font();
     QFontMetrics metrics(font);
 
-    float step = float(qAbs(metrics.width(ref) - viewport()->width())) / float(ref.length());
+    float step = float( viewport()->width()- metrics.width(ref)) / float(ref.length());
 
     font.setLetterSpacing(QFont::AbsoluteSpacing, step);
     painter.setFont(font);
@@ -179,6 +179,16 @@ void BamViewer::paintAlignement(QPainter &painter)
 
         std::stringstream stream;
         stream << record.seq;
+
+        // draw reads
+
+        QString read = QString::fromStdString(stream.str());
+
+//        painter.setBrush(QColor("#C9C9FF"));
+//        painter.drawRect(x,(row+2)*  metrics.height(),
+//                         metrics.width(read),
+//                         metrics.height()-4
+//                         );
 
         painter.drawText(x,(row+3) *  metrics.height(), QString::fromStdString(stream.str()));
 
