@@ -147,13 +147,22 @@ void BamViewer::paintAlignement(QPainter &painter)
 
     // Pack Reads ..
     mReadPacker.clear();
+    float step = float(viewport()->width()) / float(regionLength());
     while (!seqan::atEnd(bamFileIn))
     {
         seqan::BamAlignmentRecord record;
         seqan::readRecord(record, bamFileIn);
 
-        mReadPacker.addRecord(record);
+        int row = mReadPacker.getYRecord(record);
 
+        int delta  = record.beginPos - mRegion.beginPos;
+        float x    = delta *  float(viewport()->width()) / float(regionLength());
+
+        for (const seqan::CharString& nuc : record.seq)
+        {
+            painter.drawText(x,(row+3) *  metrics.height(), seqan::toCString(nuc));
+            x+= step;
+        }
 
         //        seqan::Dna5String ref = currentReferenceSequence();
         //        seqan::Align<seqan::Dna5String> align;
@@ -161,32 +170,7 @@ void BamViewer::paintAlignement(QPainter &painter)
 
     }
 
-    // Draw reads ...
-
-    int row    = 0;
-    float step = float(viewport()->width()) / float(regionLength());
-
-    while ( row < mReadPacker.rows() && (row+3) * metrics.height() < viewport()->height())
-    {
-
-        for ( const auto& rec : mReadPacker.record(row))
-        {
-            int delta  = rec.beginPos- mRegion.beginPos;
-            float x    = delta *  float(viewport()->width()) / float(regionLength());
-
-            for (const seqan::CharString& nuc : rec.seq)
-            {
-                painter.drawText(x,(row+3) *  metrics.height(), seqan::toCString(nuc));
-                x+= step;
-            }
-        }
-
-        row++;
-
-    }
-
-
-
+    // Draw reads ..
 
 
     //        float step = float(viewport()->width()) / float(regionLength());

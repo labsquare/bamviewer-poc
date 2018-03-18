@@ -9,10 +9,10 @@ class ReadPacker
 {
 public:
 
-    typedef QList<seqan::BamAlignmentRecord> RecordRow;
+    typedef QPair<std::uint64_t, std::uint64_t> RecordRow;
     ReadPacker();
 
-    void addRecord(const seqan::BamAlignmentRecord& record);
+    int getYRecord(const seqan::BamAlignmentRecord& record);
     void clear() ;
     int rows() const;
 

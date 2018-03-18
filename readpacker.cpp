@@ -5,29 +5,30 @@ ReadPacker::ReadPacker()
 
 }
 
-void ReadPacker::addRecord(const seqan::BamAlignmentRecord &record)
+int ReadPacker::getYRecord(const seqan::BamAlignmentRecord &record)
 {
-    for (auto& row : mRows)
+    for (auto it = mRows.begin(); it != mRows.end(); it++)
     {
-        seqan::BamAlignmentRecord rec = row.last();
-        if (int(record.beginPos  > int(rec.beginPos + seqan::length(rec.seq))))
+        if (record.beginPos + seqan::length(record.seq) < it->first)
         {
-            row.append(record);
-            return;
+            it->first = record.beginPos;
+            return it - mRows.begin();
+        }
+        else if (record.beginPos > it->second)
+        {
+            it->second = record.beginPos + seqan::length(record.seq);
+            return it - mRows.begin();
         }
     }
 
     // create new row
-    RecordRow row;
-    row.append(record);
+    RecordRow row = qMakePair(record.beginPos, record.beginPos + seqan::length(record.seq));
     mRows.append(row);
+    return mRows.length();
 }
 
 void ReadPacker::clear()
 {
-    for (auto i : mRows)
-        i.clear();
-
     mRows.clear();
 }
 
