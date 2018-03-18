@@ -87,14 +87,25 @@ void BamViewer::paintReference(QPainter &painter)
     // ACGTATAT........................
     seqan::Dna5String seq = currentReferenceSequence();
 
-    float step = float(viewport()->width()) / float(regionLength());
-    float x    = 0;
+    //int step = qFloor(float(viewport()->width()) / float(regionLength()));
+    int x    = 0;
 
-    for (auto& c : seq)
-    {
-        painter.drawText(x,20,QString(char(c)));
-        x+=step;
-    }
+
+    std::stringstream stream;
+    stream << seq;
+    QString ref = QString::fromStdString(stream.str());
+
+
+    QFont font = painter.font();
+    QFontMetrics metrics(font);
+
+    float step = float(qAbs(metrics.width(ref) - viewport()->width())) / float(ref.length());
+
+    font.setLetterSpacing(QFont::AbsoluteSpacing, step);
+    painter.setFont(font);
+    painter.drawText(x,20,ref);
+
+
 }
 
 void BamViewer::paintAlignement(QPainter &painter)
@@ -152,7 +163,10 @@ void BamViewer::paintAlignement(QPainter &painter)
 
     // Pack Reads ..
     mReadPacker.clear();
-    float step = float(viewport()->width()) / float(regionLength());
+
+    // WARNING : => font metrics already set in paintReference
+    // float step = float(qAbs(metrics.width(ref) - viewport()->width())) / float(ref.length());
+
     while (!seqan::atEnd(bamFileIn))
     {
         seqan::BamAlignmentRecord record;
