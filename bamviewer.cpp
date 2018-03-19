@@ -108,12 +108,12 @@ void BamViewer::paintReference(QPainter &painter)
     int x    = 0;
 
 
-    QByteArray ref;
+    QByteArray ref(seqan::length(seq), 'A');
 
     // seqan to Qt
     std::copy(seqan::begin(seq),
               seqan::end(seq),
-              std::back_inserter(ref));
+              ref.begin());
 
 
     QFont font = painter.font();
