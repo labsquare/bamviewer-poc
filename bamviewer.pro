@@ -34,13 +34,11 @@ include(track/track.pri)
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        readpacker.cpp \
-    trackviewer.cpp
+        trackviewer.cpp
 
 HEADERS += \
         mainwindow.h \
-        readpacker.h \
-    trackviewer.h
+        trackviewer.h
 
 FORMS += \
         mainwindow.ui

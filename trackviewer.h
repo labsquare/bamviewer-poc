@@ -35,6 +35,8 @@ public:
 
     void setReference(const QString& filename);
 
+    ReferenceTrack * referenceTrack() const;
+
 protected:
 
     void paintEvent(QPaintEvent * event) override;
@@ -50,6 +52,8 @@ private:
     seqan::GenomicRegion mRegion;
     QList<AbstractTrack*> mTracks;
 
+
+    int mTrackSpacing = 40;
 
     // mandatory track
     ReferenceTrack * mReferenceTrack = nullptr;

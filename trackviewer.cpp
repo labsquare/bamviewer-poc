@@ -53,12 +53,23 @@ void TrackViewer::setReference(const QString &filename)
     mReferenceTrack->setFilename(filename);
 }
 
+ReferenceTrack *TrackViewer::referenceTrack() const
+{
+    return mReferenceTrack;
+}
+
 void TrackViewer::paintEvent(QPaintEvent *event)
 {
     QPainter painter(viewport());
+
+    QFont font("Monospace");
+    font.setStyleHint(QFont::TypeWriter);
+    painter.setFont(font);
+
     for (AbstractTrack * track : mTracks)
     {
         track->paint(&painter, mRegion, viewport()->width());
+        painter.translate(0, mTrackSpacing);
     }
 }
 

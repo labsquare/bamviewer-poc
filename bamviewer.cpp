@@ -119,7 +119,8 @@ void BamViewer::paintReference(QPainter &painter)
     QFont font = painter.font();
     QFontMetrics metrics(font);
 
-    float step = float( viewport()->width()- metrics.width(ref)) / float(ref.length());
+    float step = float( width - metrics.width(ref)) / float(ref.length());
+
 
     font.setLetterSpacing(QFont::AbsoluteSpacing, step);
     painter.setFont(font);
