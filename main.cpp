@@ -6,8 +6,6 @@
 #include "mainwindow.h"
 
 #include <QContiguousCache>
-
-using namespace seqan;
 using namespace std;
 
 

@@ -2,9 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "bamviewer.h"
+#include <QtWidgets>
 #include <QContiguousCache>
-
+#include "trackviewer.h"
 
 class MainWindow : public QMainWindow
 {
@@ -15,10 +15,11 @@ public:
     ~MainWindow();
 
 private:
-    BamViewer * mViewer;
+
 
     QSlider * mSlider;
     QLineEdit * mEdit;
+    TrackViewer * mViewer;
 
 };
 

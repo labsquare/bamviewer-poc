@@ -4,12 +4,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
 
-    mViewer = new BamViewer;
+    mViewer = new TrackViewer;
+    setCentralWidget(mViewer);
 
-    mViewer->setReferenceFile("/tmp/data/ecoli.fa");
-    mViewer->setAlignementFile("/tmp/data/sample1.bam");
-    mViewer->setRegion("ecoli", 0, 100);
+    mViewer->setReference("/tmp/data/ecoli.fa");
 
+
+    mViewer->setRegion("ecoli", 1, 100);
 
 
     mEdit   = new QLineEdit;
@@ -23,7 +24,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    setCentralWidget(mViewer);
 
     resize(900, 400);
 

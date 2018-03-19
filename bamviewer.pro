@@ -29,17 +29,18 @@ DEFINES += "SEQAN_ENABLE_DEBUG=0"
 
 INCLUDEPATH += "."
 
+include(track/track.pri)
 
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        bamviewer.cpp \
-    readpacker.cpp
+        readpacker.cpp \
+    trackviewer.cpp
 
 HEADERS += \
         mainwindow.h \
-    bamviewer.h \
-    readpacker.h
+        readpacker.h \
+    trackviewer.h
 
 FORMS += \
         mainwindow.ui
