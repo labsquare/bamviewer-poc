@@ -42,6 +42,23 @@ void BamViewer::setAlignementFile(const QString &bamFile)
     if (!QFile::exists(index))
         qDebug()<<Q_FUNC_INFO<<index<<" doesn't exists";
 
+    // Open bam file
+    if(!open(mBamFileIn, mAlignementFile.toStdString().data()))
+    {
+        qWarning()<<Q_FUNC_INFO<<"cannot open bam file";
+        return;
+    }
+
+    // Open BAI index file
+    if (!open(mBaiIndex, QString(mAlignementFile+".bai").toStdString().data()))
+    {
+        qWarning()<<Q_FUNC_INFO<<"ERROR: Could not read BAI index file ";
+        return ;
+    }
+
+    // Read header
+    seqan::readHeader(mHeader, mBamFileIn);
+
 }
 void BamViewer::setRegion(const QString& chr, int start, int end)
 {
@@ -113,40 +130,12 @@ void BamViewer::paintReference(QPainter &painter)
 
 void BamViewer::paintAlignement(QPainter &painter)
 {
-    // paint top reference in viewport.width
-    // ACGTATAT........................
-
-    seqan::BamFileIn bamFileIn;
-
-    // Open bam file
-    if(!open(bamFileIn, alignementFile().toStdString().data()))
-    {
-        qWarning()<<Q_FUNC_INFO<<"cannot open bam file";
-        return;
-    }
-
-    // Open BAI index file
-    seqan::BamIndex<seqan::Bai> baiIndex;
-    if (!open(baiIndex, QString(alignementFile()+".bai").toStdString().data()))
-    {
-        qWarning()<<Q_FUNC_INFO<<"ERROR: Could not read BAI index file ";
-        return ;
-    }
-
-
-    // Read header
-    seqan::BamHeader header;
-    seqan::readHeader(header, bamFileIn);
-
-
-
     // jump to region
     bool hasAlignements = false ;
     int rID = idFromChromosom(mRegion.seqName);
 
-
     // for testing purpose : get ALL REGION 1-1000
-    if (!seqan::jumpToRegion(bamFileIn, hasAlignements, rID, 1, 1000, baiIndex))
+    if (!seqan::jumpToRegion(mBamFileIn, hasAlignements, rID, 1, 1000, mBaiIndex))
     {
         qWarning()<<"could not jump to region";
         return;
@@ -163,7 +152,6 @@ void BamViewer::paintAlignement(QPainter &painter)
     // Loop over reads and draw it using box packing
     QFontMetrics metrics(painter.font());
 
-
     // Pack Reads ..
     mReadPacker.clear();
 
@@ -173,10 +161,10 @@ void BamViewer::paintAlignement(QPainter &painter)
 
     // We must create 2 loop .
     // One for computation and one for drawing, because we don't want to draw extra reads
-    while (!seqan::atEnd(bamFileIn))
+    while (!seqan::atEnd(mBamFileIn))
     {
         seqan::BamAlignmentRecord record;
-        seqan::readRecord(record, bamFileIn);
+        seqan::readRecord(record, mBamFileIn);
 
 
         int row = mReadPacker.getYRecord(record);

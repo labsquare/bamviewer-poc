@@ -133,6 +133,10 @@ private:
     seqan::GenomicRegion mRegion;
     seqan::FaiIndex mFaiIndex;
 
+    seqan::BamFileIn mBamFileIn;
+    seqan::BamIndex<seqan::Bai> mBaiIndex;
+    seqan::BamHeader mHeader;
+
     ReadPacker mReadPacker;
 
 
