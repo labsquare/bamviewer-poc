@@ -110,6 +110,7 @@ protected:
     void paintAlignement(QPainter& painter);
 
 
+    void computeDepth();
 
 
 
@@ -138,6 +139,9 @@ private:
     seqan::BamHeader mHeader;
 
     ReadPacker mReadPacker;
+
+    QVector<int> mDepths;
+    int mMaxDepth;
 
 
 
