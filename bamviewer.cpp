@@ -176,13 +176,11 @@ void BamViewer::paintAlignement(QPainter &painter)
 
         // seqan to Qt
 
-        QByteArray read;
-
+        //QByteArray read;
+        QByteArray read(seqan::length(record.seq), 'A');
         std::copy(seqan::begin(record.seq),
                   seqan::end(record.seq),
-                  std::back_inserter(read));
-
-
+                  read.begin());
 
         //        painter.setBrush(QColor("#C9C9FF"));
         //        painter.drawRect(x,(row+2)*  metrics.height(),
