@@ -130,6 +130,9 @@ void BamViewer::paintReference(QPainter &painter)
 
 void BamViewer::paintAlignement(QPainter &painter)
 {
+
+    computeDepth();
+
     // jump to region
     bool hasAlignements = false ;
     int rID = idFromChromosom(mRegion.seqName);
@@ -191,6 +194,47 @@ void BamViewer::paintAlignement(QPainter &painter)
         if ( (row + 3 ) * metrics.height() < viewport()->height())
             painter.drawText(x,(row+3) *  metrics.height(), read);
     }
+}
+
+void BamViewer::computeDepth()
+{
+    // jump to region
+    bool hasAlignements = false ;
+    int rID = idFromChromosom(mRegion.seqName);
+
+    // for testing purpose : get ALL REGION 1-1000
+    if (!seqan::jumpToRegion(mBamFileIn, hasAlignements, rID, mRegion.beginPos+1, mRegion.endPos, mBaiIndex))
+    {
+        qWarning()<<"could not jump to region";
+        return;
+    }
+
+    // if no alignement avaible
+    if (!hasAlignements)
+    {
+        qWarning()<<"no alignement here";
+        return;
+    }
+
+    mDepths.fill(0,regionLength());
+
+    while (!seqan::atEnd(mBamFileIn))
+    {
+        seqan::BamAlignmentRecord record;
+        seqan::readRecord(record, mBamFileIn);
+
+        for (int i=record.beginPos; i< seqan::length(record.seq); ++i)
+        {
+            mDepths[i]++;
+        }
+    }
+
+    mMaxDepth = 0;
+    for (int i : mDepths)
+        mMaxDepth = qMax(mDepths[i], mMaxDepth);
+
+
+
 }
 
 quint64 BamViewer::currentReferenceLength() const
