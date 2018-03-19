@@ -20,6 +20,8 @@ public:
 
     virtual void paint(QPainter * painter, seqan::GenomicRegion& region, int width) = 0;
 
+    virtual int height() = 0;
+
 
 private:
     TrackViewer * mViewer;

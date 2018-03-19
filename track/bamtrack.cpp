@@ -69,8 +69,10 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
 
     // Clean Depth
     mDepths.clear();
-    mDepths.fill(0, viewer()->regionLength());
+    mDepths.resize(viewer()->regionLength());
+    mDepths.fill(0);
 
+    qDebug()<<"size" <<mDepths.size();
     // TODO: We must create 2 loop .
     // TODO: One for computation and one for drawing, because we don't want to draw extra reads
 
@@ -113,11 +115,10 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
     for (int i = region.beginPos; i < region.endPos; i++ )
     {
 
-        qDebug()<<mDepths[i];
-
         painter->save();
         QFont font = painter->font();
-        font.setPixelSize(8);
+        font.setLetterSpacing(QFont::AbsoluteSpacing, 0);
+        font.setPixelSize(10);
         painter->setFont(font);
         painter->drawText(x,0, QString::number(mDepths[i]));
         painter->restore();
@@ -129,12 +130,25 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
 
 }
 
+int BamTrack::height()
+{
+    return   20;
+}
+
 void BamTrack::addRecordToDepth(const seqan::BamAlignmentRecord &record)
 {
-    for (int i=record.beginPos; i<= seqan::length(record.seq); ++i)
-    {
-        mDepths[i]++;
-        if(mDepths[i] > mMaxDepth)
-            mMaxDepth = mDepths[i];
-    }
+
+//    int st = record.beginPos - viewer()->region().beginPos;
+
+//    st = st < 0 ? 0: st;
+
+//    for (int i=st; i<= seqan::length(record.seq); ++i)
+//    {
+//        if ( i < mDepths.size())
+//        {
+//            mDepths[i]++;
+//            if(mDepths[i] > mMaxDepth)
+//                mMaxDepth = mDepths[i];
+//        }
+//    }
 }

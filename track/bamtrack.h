@@ -14,6 +14,7 @@ public:
 
     void setFilename(const QString& filename);
     virtual void paint(QPainter * painter, seqan::GenomicRegion& region, int width) override;
+    virtual int height() override;
 
 
 protected:

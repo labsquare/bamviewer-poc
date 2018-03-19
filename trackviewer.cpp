@@ -5,7 +5,9 @@
 TrackViewer::TrackViewer(QWidget *parent)
     :QAbstractScrollArea(parent)
 {
-
+    mRegion.seqName  = "";
+    mRegion.beginPos = 1;
+    mRegion.endPos   = 100;
 }
 
 void TrackViewer::setRegion(const QString &chr, int start, int end)
@@ -28,8 +30,16 @@ void TrackViewer::setRegion(const seqan::GenomicRegion &region)
 
 void TrackViewer::addTrack(AbstractTrack *track)
 {
+    if (track != mReferenceTrack && mReferenceTrack == nullptr)
+    {
+        qWarning()<<"WARNING,  cannot add track before setting reference track";
+        return;
+    }
+
     track->setViewer(this);
     mTracks.append(track);
+
+    updateScrollBar();
 
 }
 
@@ -46,11 +56,12 @@ int TrackViewer::regionLength() const
 void TrackViewer::setReference(const QString &filename)
 {
     if (!mReferenceTrack){
-        mReferenceTrack = new ReferenceTrack();
+        mReferenceTrack = new ReferenceTrack(filename);
         addTrack(mReferenceTrack);
     }
+    else
+        mReferenceTrack->setFilename(filename);
 
-    mReferenceTrack->setFilename(filename);
 }
 
 ReferenceTrack *TrackViewer::referenceTrack() const
@@ -76,14 +87,19 @@ void TrackViewer::paintEvent(QPaintEvent *event)
 
 void TrackViewer::updateScrollBar()
 {
+
+    // set horizontal
     int min = 1 ;
     int max = mReferenceTrack->baseCount() -  viewport()->width();
-
-    qDebug()<<"update scroll bar "<<min<<" "<<max;
-
-
     horizontalScrollBar()->setRange(min , max );
     horizontalScrollBar()->setPageStep(viewport()->width());
+
+    // set vetical
+    int totalHeight = 0;
+    for (auto * i : mTracks)
+        totalHeight+= i->height();
+
+    verticalScrollBar()->setRange(1 , totalHeight );
 
 }
 

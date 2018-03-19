@@ -7,6 +7,7 @@
 #include <seqan/bam_io.h>
 #include <seqan/sequence.h>
 
+#include <istream>
 
 class TrackViewer;
 class ReferenceTrack;
@@ -27,12 +28,14 @@ class ReferenceTrack : public AbstractTrack
 
     quint64 chromosomToId(const seqan::CharString& chromosom) const;
 
+    QStringList chromosoms() const;
+
 
     seqan::Dna5String sequence(const seqan::GenomicRegion &region);
     seqan::Dna5String sequence();
 
     void paint(QPainter * painter, seqan::GenomicRegion& region, int width) override;
-
+    int height() override;
 
 
 private:

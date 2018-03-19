@@ -29,6 +29,8 @@ void ReferenceTrack::setFilename(const QString &filename)
     if (!open(mFaiIndex, mFastaFile.toStdString().data()))
         qDebug() << Q_FUNC_INFO<< "ERROR: Could not load FAI index " << indexFile<< "\n";
 
+    qDebug()<<chromosoms();
+
 }
 
 quint64 ReferenceTrack::baseCount(const seqan::CharString &chromosom) const
@@ -51,6 +53,20 @@ quint64 ReferenceTrack::chromosomToId(const seqan::CharString &chromosom) const
         std::cout<<Q_FUNC_INFO<<"error fai index has no entry for "<<chromosom<<std::endl;
     }
     return idx;
+}
+
+QStringList ReferenceTrack::chromosoms() const
+{
+    QStringList list;
+    for (int i = 0 ; i< seqan::numSeqs(mFaiIndex); ++i)
+    {
+        qDebug()<<i;
+        std::stringstream stream;
+        seqan::CharString sname = seqan::sequenceName(mFaiIndex, i);
+        stream << sname;
+        list.append(QString::fromStdString(stream.str()));
+    }
+    return list;
 }
 
 seqan::Dna5String ReferenceTrack::sequence(const seqan::GenomicRegion &region)
@@ -87,6 +103,11 @@ void ReferenceTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int 
     painter->setFont(font);
     painter->drawText(x,20,ref);
 
+}
+
+int ReferenceTrack::height()
+{
+    return 20;
 }
 
 
