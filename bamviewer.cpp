@@ -130,9 +130,6 @@ void BamViewer::paintReference(QPainter &painter)
 
 void BamViewer::paintAlignement(QPainter &painter)
 {
-
-    computeDepth();
-
     // jump to region
     bool hasAlignements = false ;
     int rID = idFromChromosom(mRegion.seqName);
@@ -155,8 +152,12 @@ void BamViewer::paintAlignement(QPainter &painter)
     // Loop over reads and draw it using box packing
     QFontMetrics metrics(painter.font());
 
-    // Pack Reads ..
+    // Clean Pack Reads ..
     mReadPacker.clear();
+
+    // Clean Depth
+    mDepths.clear();
+    mDepths.fill(0, regionLength());
 
     // WARNING : => font metrics already set in paintReference
     // float step = float(qAbs(metrics.width(ref) - viewport()->width())) / float(ref.length());
@@ -169,6 +170,7 @@ void BamViewer::paintAlignement(QPainter &painter)
         seqan::BamAlignmentRecord record;
         seqan::readRecord(record, mBamFileIn);
 
+        addRecordToDepth(record);
 
         int row = mReadPacker.getYRecord(record);
 
@@ -196,45 +198,14 @@ void BamViewer::paintAlignement(QPainter &painter)
     }
 }
 
-void BamViewer::computeDepth()
+void BamViewer::addRecordToDepth(const seqan::BamAlignmentRecord& record)
 {
-    // jump to region
-    bool hasAlignements = false ;
-    int rID = idFromChromosom(mRegion.seqName);
-
-    // for testing purpose : get ALL REGION 1-1000
-    if (!seqan::jumpToRegion(mBamFileIn, hasAlignements, rID, mRegion.beginPos+1, mRegion.endPos, mBaiIndex))
+    for (int i=record.beginPos; i< seqan::length(record.seq); ++i)
     {
-        qWarning()<<"could not jump to region";
-        return;
+        mDepths[i]++;
+        if(mDepths[i] > mMaxDepth)
+            mMaxDepth = mDepths[i];
     }
-
-    // if no alignement avaible
-    if (!hasAlignements)
-    {
-        qWarning()<<"no alignement here";
-        return;
-    }
-
-    mDepths.fill(0,regionLength());
-
-    while (!seqan::atEnd(mBamFileIn))
-    {
-        seqan::BamAlignmentRecord record;
-        seqan::readRecord(record, mBamFileIn);
-
-        for (int i=record.beginPos; i< seqan::length(record.seq); ++i)
-        {
-            mDepths[i]++;
-        }
-    }
-
-    mMaxDepth = 0;
-    for (int i : mDepths)
-        mMaxDepth = qMax(mDepths[i], mMaxDepth);
-
-
-
 }
 
 quint64 BamViewer::currentReferenceLength() const

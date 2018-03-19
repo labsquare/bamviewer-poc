@@ -110,9 +110,7 @@ protected:
     void paintAlignement(QPainter& painter);
 
 
-    void computeDepth();
-
-
+    void addRecordToDepth(const seqan::BamAlignmentRecord& record);
 
     // -- utils session
 
