@@ -37,6 +37,8 @@ public:
 
     ReferenceTrack * referenceTrack() const;
 
+    AbstractTrack * track(int index);
+
 protected:
 
     void paintEvent(QPaintEvent * event) override;

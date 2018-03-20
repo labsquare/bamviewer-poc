@@ -112,7 +112,7 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
     // draw depth testing ....
     float x =  0;
     float r =  float(width) / float(viewer()->regionLength());
-    for (int i = region.beginPos; i < region.endPos; i++ )
+    for (int i = 0 ; i < region.endPos - region.beginPos; i++ )
     {
 
         painter->save();
@@ -138,17 +138,17 @@ int BamTrack::height()
 void BamTrack::addRecordToDepth(const seqan::BamAlignmentRecord &record)
 {
 
-//    int st = record.beginPos - viewer()->region().beginPos;
+    int st = record.beginPos - viewer()->region().beginPos;
 
-//    st = st < 0 ? 0: st;
+    st = st < 0 ? 0: st;
 
-//    for (int i=st; i<= seqan::length(record.seq); ++i)
-//    {
-//        if ( i < mDepths.size())
-//        {
-//            mDepths[i]++;
-//            if(mDepths[i] > mMaxDepth)
-//                mMaxDepth = mDepths[i];
-//        }
-//    }
+    for (int i=st; i<= st+seqan::length(record.seq); ++i)
+    {
+        if ( i < mDepths.size())
+        {
+            mDepths[i]++;
+            if(mDepths[i] > mMaxDepth)
+                mMaxDepth = mDepths[i];
+        }
+    }
 }

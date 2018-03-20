@@ -69,6 +69,11 @@ ReferenceTrack *TrackViewer::referenceTrack() const
     return mReferenceTrack;
 }
 
+AbstractTrack *TrackViewer::track(int index)
+{
+    return mTracks[index];
+}
+
 void TrackViewer::paintEvent(QPaintEvent *event)
 {
     QPainter painter(viewport());

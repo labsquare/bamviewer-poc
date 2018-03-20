@@ -23,8 +23,12 @@ public:
     virtual int height() = 0;
 
 
+    QString name() const;
+    void setName(const QString &name);
+
 private:
     TrackViewer * mViewer;
+    QString mName;
 
 
 };
