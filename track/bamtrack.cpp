@@ -138,17 +138,21 @@ int BamTrack::height()
 void BamTrack::addRecordToDepth(const seqan::BamAlignmentRecord &record)
 {
 
-    int st = record.beginPos - viewer()->region().beginPos;
 
-    st = st < 0 ? 0: st;
 
-    for (int i=st; i<= st+seqan::length(record.seq); ++i)
+    for (int i=record.beginPos; i<= record.beginPos+seqan::length(record.seq); ++i)
     {
-        if ( i < mDepths.size())
+        if ( i >= viewer()->region().beginPos && i <= viewer()->region().endPos)
         {
-            mDepths[i]++;
-            if(mDepths[i] > mMaxDepth)
-                mMaxDepth = mDepths[i];
+            int index = i - viewer()->region().beginPos;
+
+                mDepths[index]++;
+                if(mDepths[index] > mMaxDepth)
+                    mMaxDepth = mDepths[index];
+
+
         }
+
+
     }
 }
