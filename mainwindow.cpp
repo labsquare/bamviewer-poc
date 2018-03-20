@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     addToolBar(Qt::BottomToolBarArea, tool);
 
 
-
+    connect(mViewer, SIGNAL(regionChanged(QString)), mEdit, SLOT(setText(QString)));
 
     resize(900, 400);
 

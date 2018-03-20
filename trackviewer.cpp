@@ -26,6 +26,10 @@ void TrackViewer::setRegion(const seqan::GenomicRegion &region)
     mRegion = region;
     updateScrollBar();
     viewport()->update();
+
+    emit regionChanged(regionString());
+
+
 }
 
 void TrackViewer::addTrack(AbstractTrack *track)
@@ -46,6 +50,14 @@ void TrackViewer::addTrack(AbstractTrack *track)
 const seqan::GenomicRegion &TrackViewer::region() const
 {
     return mRegion;
+}
+
+QString TrackViewer::regionString() const
+{
+    std::string string;
+    mRegion.toString<std::string>(string);
+
+    return QString::fromStdString(string);
 }
 
 int TrackViewer::regionLength() const
@@ -95,7 +107,10 @@ void TrackViewer::updateScrollBar()
 
     // set horizontal
     int min = 1 ;
-    int max = mReferenceTrack->baseCount() -  viewport()->width();
+
+    qDebug()<<mReferenceTrack->baseCount();
+
+    int max = mReferenceTrack->baseCount() - regionLength();
     horizontalScrollBar()->setRange(min , max );
     horizontalScrollBar()->setPageStep(viewport()->width());
 
@@ -110,7 +125,5 @@ void TrackViewer::updateScrollBar()
 
 void TrackViewer::scrollContentsBy(int dx, int dy)
 {
-    mRegion.beginPos += -dx ;
-    mRegion.endPos   += -dx;
-    viewport()->update();
+    setRegion(seqan::toCString(region().seqName), mRegion.beginPos - dx , mRegion.endPos - dx);
 }

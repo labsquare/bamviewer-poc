@@ -31,6 +31,7 @@ public:
     void addTrack(AbstractTrack * track);
 
     const seqan::GenomicRegion& region() const;
+    QString regionString() const;
     int regionLength() const;
 
     void setReference(const QString& filename);
@@ -38,6 +39,10 @@ public:
     ReferenceTrack * referenceTrack() const;
 
     AbstractTrack * track(int index);
+
+Q_SIGNALS:
+    void regionChanged(QString string);
+
 
 protected:
 

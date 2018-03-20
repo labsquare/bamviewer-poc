@@ -13,7 +13,7 @@ class TrackViewer;
 class ReferenceTrack;
 class ReferenceTrack : public AbstractTrack
 {
-  public:
+public:
     ReferenceTrack(const QString& filename = QString());
 
     /*!
@@ -36,6 +36,8 @@ class ReferenceTrack : public AbstractTrack
 
     void paint(QPainter * painter, seqan::GenomicRegion& region, int width) override;
     int height() override;
+
+
 
 
 private:
