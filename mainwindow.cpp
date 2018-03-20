@@ -30,6 +30,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(mViewer, SIGNAL(regionChanged(QString)), mEdit, SLOT(setText(QString)));
 
+    connect(mEdit, &QLineEdit::returnPressed,[this](){
+
+        QRegularExpression exp("(\\w+):(\\d+)-(\\d+)");
+        auto match = exp.match(mEdit->text());
+
+        if (match.hasMatch())
+        {
+            QString name = match.captured(1);
+            int start    = match.captured(2).toInt();
+            int end      = match.captured(3).toInt();
+
+            mViewer->setRegion(name, start, end);
+        }
+
+    });
+
     resize(900, 400);
 
 }
