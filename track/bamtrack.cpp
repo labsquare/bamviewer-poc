@@ -43,12 +43,21 @@ void BamTrack::setFilename(const QString &filename)
 
 void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
 {
-    // jump to region
     bool hasAlignements = false ;
     int rID = viewer()->referenceTrack()->chromosomToId(region.seqName);
 
-    // for testing purpose : get ALL REGION 1-1000
-    if (!seqan::jumpToRegion(mBamFileIn, hasAlignements, rID, 1, 1000, mBaiIndex))
+    // compute region with margin
+    int regionBegin = region.beginPos - mRegionMargin;
+    int regionEnd   = region.endPos + mRegionMargin;
+
+    if (regionBegin < 1)
+        regionBegin = 1;
+
+    if (regionEnd >= viewer()->referenceTrack()->baseCount())
+        regionEnd = viewer()->referenceTrack()->baseCount() - 5; // TODO be sure
+
+    // Move seek to the record starting at region
+    if (!seqan::jumpToRegion(mBamFileIn, hasAlignements, rID, regionBegin, regionEnd, mBaiIndex))
     {
         qWarning()<<"could not jump to region";
         return;
@@ -72,7 +81,6 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
     mDepths.resize(viewer()->regionLength());
     mDepths.fill(0);
 
-    qDebug()<<"size" <<mDepths.size();
     // TODO: We must create 2 loop .
     // TODO: One for computation and one for drawing, because we don't want to draw extra reads
 
@@ -80,6 +88,10 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
     {
         seqan::BamAlignmentRecord record;
         seqan::readRecord(record, mBamFileIn);
+
+        // exit the loop if record is right outside ! Critical if forgot
+        if (record.beginPos + seqan::length(record.cigar) >= regionEnd)
+            return;
 
         addRecordToDepth(record);
 
@@ -104,27 +116,27 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
         //                         metrics.height()-4
         //                         );
 
-        if ((row+5)  * metrics.height() < viewer()->viewport()->height())
-            painter->drawText(x, (row+5) *  metrics.height(), read);
+        if ((row)  * metrics.height() < viewer()->viewport()->height())
+            painter->drawText(x, (row) *  metrics.height(), read);
     }
 
 
-    // draw depth testing ....
-    float x =  0;
-    float r =  float(width) / float(viewer()->regionLength());
-    for (int i = 0 ; i < region.endPos - region.beginPos; i++ )
-    {
+//    // draw depth testing ....
+//    float x =  0;
+//    float r =  float(width) / float(viewer()->regionLength());
+//    for (int i = 0 ; i < region.endPos - region.beginPos; i++ )
+//    {
 
-        painter->save();
-        QFont font = painter->font();
-        font.setLetterSpacing(QFont::AbsoluteSpacing, 0);
-        font.setPixelSize(10);
-        painter->setFont(font);
-        painter->drawText(x,0, QString::number(mDepths[i]));
-        painter->restore();
-        x += r ;
+//        painter->save();
+//        QFont font = painter->font();
+//        font.setLetterSpacing(QFont::AbsoluteSpacing, 0);
+//        font.setPixelSize(10);
+//        painter->setFont(font);
+//        painter->drawText(x,0, QString::number(mDepths[i]));
+//        painter->restore();
+//        x += r ;
 
-    }
+//    }
 
 
 
@@ -143,9 +155,10 @@ void BamTrack::addRecordToDepth(const seqan::BamAlignmentRecord &record)
         {
             int index = i - viewer()->region().beginPos;
 
-                mDepths[index]++;
-                if(mDepths[index] > mMaxDepth)
-                    mMaxDepth = mDepths[index];
+            mDepths[index]++;
+            if(mDepths[index] > mMaxDepth)
+                mMaxDepth = mDepths[index];
         }
     }
 }
+

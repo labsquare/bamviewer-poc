@@ -20,6 +20,7 @@ public:
 protected:
     void addRecordToDepth(const seqan::BamAlignmentRecord& record);
 
+
 private:
     QString mFilename;
 
@@ -31,6 +32,8 @@ private:
 
     QVector<int> mDepths;
     int mMaxDepth;
+
+    int mRegionMargin = 10;
 
 };
 
