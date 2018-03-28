@@ -76,10 +76,11 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
     // Clean Pack Reads ..
     mReadPacker.clear();
 
+
     // Clean Depth
-    mDepths.clear();
-    mDepths.resize(viewer()->regionLength());
-    mDepths.fill(0);
+//    mDepths.clear();
+//    mDepths.resize(viewer()->regionLength());
+//    mDepths.fill(0);
 
     // TODO: We must create 2 loop .
     // TODO: One for computation and one for drawing, because we don't want to draw extra reads
@@ -90,10 +91,10 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
         seqan::readRecord(record, mBamFileIn);
 
         // exit the loop if record is right outside ! Critical if forgot
-        if (record.beginPos + seqan::length(record.cigar) >= regionEnd)
+        if (record.beginPos + seqan::length(record.seq) >= regionEnd)
             return;
 
-        addRecordToDepth(record);
+//        addRecordToDepth(record);
 
         int row = mReadPacker.getYRecord(record);
 

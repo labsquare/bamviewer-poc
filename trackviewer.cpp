@@ -108,7 +108,7 @@ void TrackViewer::updateScrollBar()
     // set horizontal
     int min = 1 ;
 
-    qDebug()<<mReferenceTrack->baseCount();
+    //qDebug()<<mReferenceTrack->baseCount();
 
     int max = mReferenceTrack->baseCount() - regionLength();
     horizontalScrollBar()->setRange(min , max );
