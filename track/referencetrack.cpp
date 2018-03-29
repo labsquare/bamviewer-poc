@@ -109,7 +109,10 @@ void ReferenceTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int 
 
 int ReferenceTrack::height()
 {
-    return 20;
+    QFont font;
+    QFontMetrics metrics(font);
+
+    return metrics.height();
 }
 
 

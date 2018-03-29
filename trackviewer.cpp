@@ -107,10 +107,9 @@ void TrackViewer::updateScrollBar()
 
     // set horizontal
     int min = 1 ;
-
-    //qDebug()<<mReferenceTrack->baseCount();
-
     int max = mReferenceTrack->baseCount() - regionLength();
+
+
     horizontalScrollBar()->setRange(min , max );
     horizontalScrollBar()->setPageStep(viewport()->width());
 
@@ -119,7 +118,7 @@ void TrackViewer::updateScrollBar()
     for (auto * i : mTracks)
         totalHeight+= i->height();
 
-    verticalScrollBar()->setRange(1 , totalHeight );
+    verticalScrollBar()->setRange(1 , totalHeight);
 
 }
 
@@ -128,4 +127,15 @@ void TrackViewer::scrollContentsBy(int dx, int dy)
     setRegion(seqan::toCString(region().seqName),
               mRegion.beginPos - dx ,
               mRegion.endPos   - dx);
+
+
+    mY -= dy;
+
+
+
+}
+
+int TrackViewer::y() const
+{
+    return mY;
 }

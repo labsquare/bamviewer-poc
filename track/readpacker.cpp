@@ -9,8 +9,6 @@ int ReadPacker::getYRecord(const seqan::BamAlignmentRecord &record)
     int rowIndex = -1;
 
 
-    qDebug()<<mOliveData.size();
-
     QByteArray key(seqan::length(record.qName), 'A');
 
 
@@ -57,6 +55,7 @@ int ReadPacker::getYRecord(const seqan::BamAlignmentRecord &record)
 void ReadPacker::clear()
 {
     mRows.clear();
+    mOliveData.clear();
 }
 
 int ReadPacker::rows() const

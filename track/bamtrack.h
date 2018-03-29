@@ -35,6 +35,8 @@ private:
 
     int mRegionMargin = 100;
 
+    seqan::GenomicRegion oldRegion;
+
 };
 
 #endif // BAMTRACK_H

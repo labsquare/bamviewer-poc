@@ -43,6 +43,8 @@ void BamTrack::setFilename(const QString &filename)
 
 void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
 {
+
+
     bool hasAlignements = false ;
     int rID = viewer()->referenceTrack()->chromosomToId(region.seqName);
 
@@ -73,8 +75,13 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
     // Loop over reads and draw it using box packing
     QFontMetrics metrics(painter->font());
 
-    // Clean Pack Reads ..
-    //mReadPacker.clear();
+    //Clean Pack Reads ..
+
+
+    if (qAbs(region.beginPos - oldRegion.beginPos) > 1000)
+        mReadPacker.clear();
+
+    oldRegion = region;
 
 
     // Clean Depth
@@ -105,7 +112,14 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
                   seqan::end(record.seq),
                   read.begin());
 
-        painter->drawText(x, (row) *  metrics.height(), read);
+        int frameHeight = viewer()->viewport()->height();
+        int rowYPixel = (row) *  metrics.height();
+
+
+        int y = rowYPixel - viewer()->y();
+
+        if ( y < viewer()->viewport()->height())
+            painter->drawText(x,y , read);
 
         i++;
 
@@ -114,7 +128,11 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
 
 int BamTrack::height()
 {
-    return   20;
+
+    QFont font;
+    QFontMetrics metrics(font);
+    return  mReadPacker.rows() * metrics.height();
+
 }
 
 void BamTrack::addRecordToDepth(const seqan::BamAlignmentRecord &record)

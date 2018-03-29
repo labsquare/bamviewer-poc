@@ -40,6 +40,8 @@ public:
 
     AbstractTrack * track(int index);
 
+    int y() const;
+
 Q_SIGNALS:
     void regionChanged(QString string);
 
@@ -66,6 +68,8 @@ private:
 
     // mandatory track
     ReferenceTrack * mReferenceTrack = nullptr;
+
+    int mY = 0;
 
 
 
