@@ -57,6 +57,8 @@ protected:
 
 private:
     seqan::GenomicRegion mRegion;
+
+
     QList<AbstractTrack*> mTracks;
 
 

@@ -10,6 +10,9 @@ class ReadPacker
 public:
 
     typedef QPair<std::uint64_t, std::uint64_t> RecordRow;
+
+    // RecordRow ( start, end )
+
     ReadPacker();
 
     int getYRecord(const seqan::BamAlignmentRecord& record);
@@ -21,6 +24,9 @@ public:
 
 private:
     QList<RecordRow> mRows;
+    QHash<QByteArray, int> mOliveData;  // record name : row index
+
+
 
 
 };

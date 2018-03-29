@@ -33,7 +33,7 @@ private:
     QVector<int> mDepths;
     int mMaxDepth;
 
-    int mRegionMargin = 50;
+    int mRegionMargin = 100;
 
 };
 

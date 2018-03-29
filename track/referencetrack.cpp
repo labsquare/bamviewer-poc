@@ -103,6 +103,8 @@ void ReferenceTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int 
     painter->setFont(font);
     painter->drawText(x,20,ref);
 
+
+
 }
 
 int ReferenceTrack::height()

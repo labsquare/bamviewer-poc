@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "bamtrack.h"
+#include "oliviertrack.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -9,13 +10,11 @@ MainWindow::MainWindow(QWidget *parent) :
     mViewer = new TrackViewer;
     setCentralWidget(mViewer);
 
-    mViewer->setReference("/tmp/data/ecoli.fa");
+    mViewer->setReference("/home/sacha/Linux_data/bioinfo/data/hg19.fa");
 
-    mViewer->addTrack(new BamTrack("/tmp/data/sample1.bam"));
+    mViewer->addTrack(new BamTrack("/home/sacha/Linux_data/bioinfo/data/bam/IonXpress_001_R_2018_02_06_11_44_40_user_run18C28_Auto_user_run18C28_349.bam"));
 
-
-
-    mViewer->setRegion("ecoli", 1, 100);
+    mViewer->setRegion("chr5",112111255,112111467);
 
 
     mEdit   = new QLineEdit;

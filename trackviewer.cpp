@@ -125,5 +125,7 @@ void TrackViewer::updateScrollBar()
 
 void TrackViewer::scrollContentsBy(int dx, int dy)
 {
-    setRegion(seqan::toCString(region().seqName), mRegion.beginPos - dx , mRegion.endPos - dx);
+    setRegion(seqan::toCString(region().seqName),
+              mRegion.beginPos - dx ,
+              mRegion.endPos   - dx);
 }

@@ -74,36 +74,30 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
     QFontMetrics metrics(painter->font());
 
     // Clean Pack Reads ..
-    mReadPacker.clear();
+    //mReadPacker.clear();
 
 
     // Clean Depth
-//    mDepths.clear();
-//    mDepths.resize(viewer()->regionLength());
-//    mDepths.fill(0);
+    //    mDepths.clear();
+    //    mDepths.resize(viewer()->regionLength());
+    //    mDepths.fill(0);
 
     // TODO: We must create 2 loop .
     // TODO: One for computation and one for drawing, because we don't want to draw extra reads
 
-    while (!seqan::atEnd(mBamFileIn))
+
+    int i = 0;
+    while (!seqan::atEnd(mBamFileIn) && i < 1000)
     {
         seqan::BamAlignmentRecord record;
         seqan::readRecord(record, mBamFileIn);
 
-        // exit the loop if record is right outside ! Critical if forgot
-        if (record.beginPos + seqan::length(record.seq) >= regionEnd)
-            return;
 
-//        addRecordToDepth(record);
 
         int row = mReadPacker.getYRecord(record);
 
         int delta  = record.beginPos - region.beginPos;
         float x    = delta *  float(width) / float(viewer()->regionLength());
-
-        // draw reads
-
-        // seqan to Qt
 
         //QByteArray read;
         QByteArray read(seqan::length(record.seq), 'A');
@@ -111,36 +105,11 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
                   seqan::end(record.seq),
                   read.begin());
 
-        //        painter.setBrush(QColor("#C9C9FF"));
-        //        painter.drawRect(x,(row+2)*  metrics.height(),
-        //                         metrics.width(read),
-        //                         metrics.height()-4
-        //                         );
+        painter->drawText(x, (row) *  metrics.height(), read);
 
-        if ((row)  * metrics.height() < viewer()->viewport()->height())
-            painter->drawText(x, (row) *  metrics.height(), read);
+        i++;
+
     }
-
-
-//    // draw depth testing ....
-//    float x =  0;
-//    float r =  float(width) / float(viewer()->regionLength());
-//    for (int i = 0 ; i < region.endPos - region.beginPos; i++ )
-//    {
-
-//        painter->save();
-//        QFont font = painter->font();
-//        font.setLetterSpacing(QFont::AbsoluteSpacing, 0);
-//        font.setPixelSize(10);
-//        painter->setFont(font);
-//        painter->drawText(x,0, QString::number(mDepths[i]));
-//        painter->restore();
-//        x += r ;
-
-//    }
-
-
-
 }
 
 int BamTrack::height()
