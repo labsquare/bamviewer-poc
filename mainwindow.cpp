@@ -10,11 +10,11 @@ MainWindow::MainWindow(QWidget *parent) :
     mViewer = new TrackViewer;
     setCentralWidget(mViewer);
 
-    mViewer->setReference("/home/sacha/Linux_data/bioinfo/data/hg19.fa");
+    mViewer->setReference("/tmp/data/ecoli.fa");
 
-    mViewer->addTrack(new BamTrack("/home/sacha/Linux_data/bioinfo/data/bam/IonXpress_001_R_2018_02_06_11_44_40_user_run18C28_Auto_user_run18C28_349.bam"));
+    mViewer->addTrack(new BamTrack("/tmp/data/sample1.bam"));
 
-    mViewer->setRegion("chr5",112111255,112111467);
+    mViewer->setRegion("ecoli", 1, 100);
 
 
     mEdit   = new QLineEdit;
