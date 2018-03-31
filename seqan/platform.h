@@ -1,4 +1,4 @@
-// ==========================================================================
+﻿// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 // Copyright (c) 2006-2018, Knut Reinert, FU Berlin
@@ -285,16 +285,16 @@ typedef uint16_t __uint16; // nolint
 [[deprecated("Use uint8_t instead.")]]
 typedef uint8_t __uint8;   // nolint
 
-#if !(defined(COMPILER_LINTEL) || defined(STDLIB_VS))
-[[deprecated("Use int64_t instead.")]]
-typedef int64_t __int64;   // nolint
-[[deprecated("Use int32_t instead.")]]
-typedef int32_t __int32;   // nolint
-[[deprecated("Use int16_t instead.")]]
-typedef int16_t __int16;   // nolint
-[[deprecated("Use int8_t instead.")]]
-typedef int8_t __int8;     // nolint
-#endif
+//#if !(defined(COMPILER_LINTEL) || defined(STDLIB_VS))
+//[[deprecated("Use int64_t instead.")]]
+//typedef int64_t __int64;   // nolint
+//[[deprecated("Use int32_t instead.")]]
+//typedef int32_t __int32;   // nolint
+//[[deprecated("Use int16_t instead.")]]
+//typedef int16_t __int16;   // nolint
+//[[deprecated("Use int8_t instead.")]]
+//typedef int8_t __int8;     // nolint
+//#endif
 
 #if defined(COMPILER_MSVC) || defined(COMPILER_WINTEL)
 #define finline __forceinline

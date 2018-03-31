@@ -1,4 +1,4 @@
-// ==========================================================================
+﻿// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 // Copyright (c) 2006-2018, Knut Reinert, FU Berlin
@@ -114,11 +114,11 @@ enum FileMappingAdvise {
 #else
 
 enum FileMappingAdvise {
-    MAP_NORMAL = POSIX_MADV_NORMAL,
-    MAP_RANDOM = POSIX_MADV_RANDOM,
-    MAP_SEQUENTIAL = POSIX_MADV_SEQUENTIAL,
-    MAP_WILLNEED = POSIX_MADV_WILLNEED,
-    MAP_DONTNEED = POSIX_MADV_DONTNEED
+    MAP_NORMAL ,
+    MAP_RANDOM ,
+    MAP_SEQUENTIAL,
+    MAP_WILLNEED ,
+    MAP_DONTNEED
 };
 
 #endif

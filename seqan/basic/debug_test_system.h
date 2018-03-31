@@ -1,4 +1,4 @@
-// ==========================================================================
+﻿// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 // Copyright (c) 2006-2018, Knut Reinert, FU Berlin
@@ -706,7 +706,7 @@ const char * tempFileName()
     (void) _tmp;
     umask(cur_umask);
     unlink(fileNameBuffer);
-    mkdir(fileNameBuffer, 0777);
+    mkdir(fileNameBuffer);
 
     StaticData::tempFileNames().push_back(fileNameBuffer);
 

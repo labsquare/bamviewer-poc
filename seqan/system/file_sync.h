@@ -1,4 +1,4 @@
-// ==========================================================================
+﻿// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 // Copyright (c) 2006-2018, Knut Reinert, FU Berlin
@@ -319,14 +319,14 @@ public:
         // First, try to get the temporary directory from the environment
         // variables TMPDIR, TMP.
         std::string tmpDir;
-        if ((getuid() == geteuid()) && (getgid() == getegid()))
-        {
-            char * res;
-            if ((res = getenv("TMPDIR")) != NULL)
-                tmpDir = res;
-            else if ((res = getenv("TMP")) != NULL)
-                tmpDir = res;
-        }
+//        if ((getuid() == geteuid()) && (getgid() == getegid()))
+//        {
+//            char * res;
+//            if ((res = getenv("TMPDIR")) != NULL)
+//                tmpDir = res;
+//            else if ((res = getenv("TMP")) != NULL)
+//                tmpDir = res;
+//        }
         // If this does not work, try to use the constant
         // SEQAN_DEFAULT_TMPDIR, fall back to "/tmp", if this does not
         // work.

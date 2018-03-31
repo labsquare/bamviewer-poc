@@ -1,6 +1,6 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "bamtrack.h"
+//#include "bamtrack.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -9,9 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
     mViewer = new TrackViewer;
     setCentralWidget(mViewer);
 
-    mViewer->setReference("/tmp/data/ecoli.fa");
+    mViewer->setReference("C:/data/ecoli.fa");
 
-    mViewer->addTrack(new BamTrack("/tmp/data/sample1.bam"));
+ //   mViewer->addTrack(new BamTrack("C:/data/sample1.bam"));
 
 
 

@@ -23,9 +23,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG+= c++14
 # Set data example path
 
+QMAKE_CXXFLAGS += -W -Wall -Wno-long-long -pedantic -Wno-variadic-macros
+
 # Seqan configuration
-DEFINES += "SEQAN_HAS_ZLIB=1"
-DEFINES += "SEQAN_ENABLE_DEBUG=0"
+DEFINES += "SEQAN_HAS_ZLIB=0"
+DEFINES += "SEQAN_ENABLE_DEBUG=1"
+DEFINES += "DSEQAN_ENABLE_TESTING=1"
+DEFINES += "SEQAN_ASYNC_IO=0"
+DEFINES += NDEBUG
 
 INCLUDEPATH += "."
 
@@ -43,5 +48,12 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-LIBS+= -lrt
-LIBS+= -lz
+
+LIBS += -lws2_32
+
+
+LIBS += -L$$PWD/../../../../../seqanextra/mingw/lib/ -lzlib
+
+
+INCLUDEPATH += $$PWD/../../../../../seqanextra/mingw/include
+DEPENDPATH += $$PWD/../../../../../seqanextra/mingw/include
