@@ -94,14 +94,17 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
 
 
     int i = 0;
-    while (!seqan::atEnd(mBamFileIn) && i < 1000)
+    while (!seqan::atEnd(mBamFileIn))
     {
         seqan::BamAlignmentRecord record;
         seqan::readRecord(record, mBamFileIn);
 
+        if ( record.beginPos > region.endPos)
+            return;
 
 
         int row = mReadPacker.getYRecord(record);
+
 
         int delta  = record.beginPos - region.beginPos;
         float x    = delta *  float(width) / float(viewer()->regionLength());
@@ -112,13 +115,14 @@ void BamTrack::paint(QPainter *painter, seqan::GenomicRegion &region, int width)
                   seqan::end(record.seq),
                   read.begin());
 
+
         int frameHeight = viewer()->viewport()->height();
         int rowYPixel = (row) *  metrics.height();
 
 
         int y = rowYPixel - viewer()->y();
 
-        if ( y < viewer()->viewport()->height())
+        if ( y < viewer()->viewport()->height() && y > -15)
             painter->drawText(x,y , read);
 
         i++;
